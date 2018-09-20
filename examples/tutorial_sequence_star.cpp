@@ -50,8 +50,8 @@ void Assert(bool condition)
 int main()
 {
     BehaviorTreeFactory factory;
-    factory.registerSimpleCondition("TemperatureOK", std::bind( CheckBattery ));
-    factory.registerSimpleCondition("BatteryOK", std::bind( CheckTemperature ));
+    factory.registerSimpleCondition("TemperatureOK", std::bind( DummyNodes::CheckBattery ));
+    factory.registerSimpleCondition("BatteryOK", std::bind( DummyNodes::CheckTemperature ));
     factory.registerNodeType<MoveBaseAction>("MoveBase");
 
     // Loog at the state transitions and messages using either

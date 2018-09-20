@@ -30,17 +30,13 @@ int main()
     BehaviorTreeFactory factory;
 
 #ifdef MANUAL_STATIC_LINKING
-        DummyNodes::RegisterNodes(factory);
+    // This helper function is optional if you plan to link
+    // your TreeNodes statically. Check dummy_nodes.h to see how it is implemented
+    DummyNodes::RegisterNodes(factory);
 #else
-        factory.registerFromPlugin("libdummy_nodes.so");
+    // Load dynamically a plugin and register the TreeNodes it contains
+    factory.registerFromPlugin("./libdummy_nodes.so");
 #endif
-
-    std::cout << "------ List of registered Nodes ------- " << std::endl;
-    for (auto& model: factory.manifests() )
-    {
-        std::cout << model.registration_ID << std::endl;
-    }
-    std::cout << "--------------------------------------- " << std::endl;
 
     // IMPORTANT: when the object tree goes out of scope, all the TreeNodes are destroyed
     auto tree = buildTreeFromText(factory, xml_text);

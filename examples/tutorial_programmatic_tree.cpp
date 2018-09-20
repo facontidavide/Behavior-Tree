@@ -5,6 +5,7 @@ using namespace BT;
 
 int main()
 {
+    using namespace DummyNodes;
     Foo foo;
 
     BT::SequenceNode sequence_root("sequence");

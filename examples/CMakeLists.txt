@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(behavior_tree_core)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11 -pthread -Werror=return-type")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11 -Werror=return-type")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -11,10 +11,27 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 include_directories( ../include ../sample_nodes )
 
-add_executable(tutorial_factory_tree  tutorial_factory_tree.cpp )
-target_link_libraries(tutorial_factory_tree
-    ${BEHAVIOR_TREE_LIBRARIES}
-    dummy_nodes
-    movebase_node
-    crossdoor_nodes )
+# This tutorial demonstrates how to compile statically a tree (no factory)
+add_executable(tutorial_programmatic_tree         tutorial_programmatic_tree.cpp )
+target_link_libraries(tutorial_programmatic_tree  dummy_nodes ${BEHAVIOR_TREE_LIBRARIES} )
 
+# The plugin libdummy_nodes.so can be linked statically or
+# loaded dynamically at run-time.
+add_executable(tutorial_factory_static  tutorial_factory_tree.cpp )
+target_compile_definitions(tutorial_factory_static PRIVATE "MANUAL_STATIC_LINKING")
+target_link_libraries(tutorial_factory_static ${BEHAVIOR_TREE_LIBRARIES}  dummy_nodes )
+
+add_executable(tutorial_factory_dynamic  tutorial_factory_tree.cpp )
+target_link_libraries(tutorial_factory_dynamic ${BEHAVIOR_TREE_LIBRARIES} )
+
+# This tutorial demonstrates how to use blackboards and NodeParameters
+add_executable(tutorial_blackboard         tutorial_blackboard.cpp )
+target_link_libraries(tutorial_blackboard  movebase_node ${BEHAVIOR_TREE_LIBRARIES} )
+
+# This tutorial shows how the difference between Sequence and SequenceStar
+add_executable(tutorial_sequence_star        tutorial_sequence_star.cpp )
+target_link_libraries(tutorial_sequence_star movebase_node dummy_nodes ${BEHAVIOR_TREE_LIBRARIES} )
+
+# This tutorial demonstrate how to use blackboards and NodeParameters
+add_executable(crossdoor_example         crossdoor_example.cpp )
+target_link_libraries(crossdoor_example  crossdoor_nodes ${BEHAVIOR_TREE_LIBRARIES} )

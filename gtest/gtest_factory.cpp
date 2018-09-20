@@ -2,7 +2,7 @@
 #include "action_test_node.h"
 #include "condition_test_node.h"
 #include "behavior_tree_core/xml_parsing.h"
-#include "../examples/crossdoor_dummy_nodes.h"
+#include "../sample_nodes/crossdoor_nodes.h"
 
 // clang-format off
 
@@ -80,7 +80,7 @@ const std::string xml_text_subtree = R"(
 TEST(BehaviorTreeFactory, VerifyLargeTree)
 {
     BT::BehaviorTreeFactory factory;
-    BT::RegisterNodes(factory);
+    CrossDoor::RegisterNodes(factory);
 
     BT::XMLParser parser(factory);
     parser.loadFromText(xml_text);
@@ -137,7 +137,7 @@ TEST(BehaviorTreeFactory, VerifyLargeTree)
 TEST(BehaviorTreeFactory, Subtree)
 {
     BT::BehaviorTreeFactory factory;
-    BT::RegisterNodes(factory);
+    CrossDoor::RegisterNodes(factory);
 
     BT::XMLParser parser(factory);
     parser.loadFromText(xml_text_subtree);

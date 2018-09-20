@@ -104,7 +104,7 @@ set(BT_Tests
         gtest/src/action_test_node.cpp
         gtest/src/condition_test_node.cpp
         gtest/gtest_tree.cpp
-#        gtest/gtest_factory.cpp
+        gtest/gtest_factory.cpp
 )
 
 if(catkin_FOUND AND CATKIN_ENABLE_TESTING)
@@ -122,7 +122,8 @@ elseif(GTEST_FOUND)
     target_link_libraries(behavior_tree_core_test
         behavior_tree_core
         ${GTEST_LIBRARIES}
-        ${GTEST_MAIN_LIBRARIES} )
+        ${GTEST_MAIN_LIBRARIES}
+        crossdoor_nodes)
 		
 endif()
 
