@@ -131,12 +131,16 @@ endif()
 ######################################################
 
 add_executable(bt_log_cat         tools/bt_log_cat.cpp )
-target_link_libraries(bt_log_cat  behavior_tree_core )
+target_link_libraries(bt_log_cat  ${BEHAVIOR_TREE_LIBRARIES} )
 
 if( ZMQ_FOUND )
     add_executable(bt_recorder         tools/bt_recorder.cpp )
     target_link_libraries(bt_recorder  ${BEHAVIOR_TREE_LIBRARIES} )
 endif()
+
+add_executable(bt_plugin_manifest         tools/bt_plugin_manifest.cpp )
+target_link_libraries(bt_plugin_manifest  ${BEHAVIOR_TREE_LIBRARIES} )
+
 
 add_subdirectory(sample_nodes)
 add_subdirectory(examples)

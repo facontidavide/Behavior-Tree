@@ -36,7 +36,7 @@ namespace BT
 typedef std::function<std::unique_ptr<TreeNode>(const std::string&, const NodeParameters&)> NodeBuilder;
 
 /// This information is used mostly by the XMLParser.
-struct TreeNodeModel
+struct TreeNodeManifest
 {
     NodeType type;
     std::string registration_ID;
@@ -112,19 +112,19 @@ class BehaviorTreeFactory
                        "you MUST add a constructor sign signature (const std::string&, const NodeParameters&)\n" );
 
         registerNodeTypeImpl<T>(ID);
-        storeNodeModel<T>(ID);
+        storeNodeManifest<T>(ID);
     }
 
     /// All the builders. Made available mostly for debug purposes.
     const std::map<std::string, NodeBuilder>& builders() const;
 
-    /// Exposes all the TreeNodeModel.
-    const std::vector<TreeNodeModel>& models() const;
+    /// Exposes all the storeNodeManifest.
+    const std::vector<TreeNodeManifest>& manifests() const;
 
   private:
 
     std::map<std::string, NodeBuilder> builders_;
-    std::vector<TreeNodeModel> treenode_models_;
+    std::vector<TreeNodeManifest> manifests_;
 
     // template specialization + SFINAE + black magic
 
@@ -184,21 +184,21 @@ class BehaviorTreeFactory
 
     template<typename T>
     typename std::enable_if< has_static_method_requiredNodeParameters<T>::value>::type
-    storeNodeModel(const std::string& ID)
+    storeNodeManifest(const std::string& ID)
     {
-        treenode_models_.push_back( { getType<T>(), ID, T::requiredNodeParameters()} );
-        sortTreeNodeModel();
+        manifests_.push_back( { getType<T>(), ID, T::requiredNodeParameters()} );
+        sortTreeNodeManifests();
     }
 
     template<typename T>
     typename std::enable_if< !has_static_method_requiredNodeParameters<T>::value>::type
-    storeNodeModel(const std::string& ID)
+    storeNodeManifest(const std::string& ID)
     {
-        treenode_models_.push_back( { getType<T>(), ID, NodeParameters()} );
-        sortTreeNodeModel();
+        manifests_.push_back( { getType<T>(), ID, NodeParameters()} );
+        sortTreeNodeManifests();
     }
 
-    void sortTreeNodeModel();
+    void sortTreeNodeManifests();
 
     // clang-format on
 };

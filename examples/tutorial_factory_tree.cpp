@@ -36,7 +36,7 @@ int main()
 #endif
 
     std::cout << "------ List of registered Nodes ------- " << std::endl;
-    for (auto& model: factory.models() )
+    for (auto& model: factory.manifests() )
     {
         std::cout << model.registration_ID << std::endl;
     }

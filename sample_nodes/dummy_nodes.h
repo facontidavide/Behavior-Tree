@@ -43,8 +43,8 @@ inline void RegisterNodes(BT::BehaviorTreeFactory& factory)
 {
     static Foo foo;
     factory.registerSimpleAction("SayHello", std::bind(SayHello) );
-    factory.registerSimpleAction("CheckBattery", std::bind(CheckBattery) );
-    factory.registerSimpleAction("CheckTemperature", std::bind(CheckTemperature) );
+    factory.registerSimpleCondition("CheckBattery", std::bind(CheckBattery) );
+    factory.registerSimpleCondition("CheckTemperature", std::bind(CheckTemperature) );
     factory.registerSimpleAction("ActionOne", std::bind( &Foo::actionOne, &foo));
     factory.registerSimpleAction("ActionTwo", std::bind( &Foo::actionTwo, &foo));
     factory.registerNodeType<CustomAction>("CustomAction");
