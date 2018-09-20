@@ -23,10 +23,16 @@
 
 #include "behavior_tree_core/behavior_tree.h"
 
+const char PLUGIN_SYMBOL[] = "BT_RegisterNodesFromPlugin";
+
+#define BT_REGISTER_NODES(factory)  \
+    extern "C" void __attribute__((visibility("default"))) BT_RegisterNodesFromPlugin( BT::BehaviorTreeFactory& factory )
+
+
 namespace BT
 {
 
-// The term "Builder" refers to the Builder Pattern (https://en.wikipedia.org/wiki/Builder_pattern)
+/// The term "Builder" refers to the Builder Pattern (https://en.wikipedia.org/wiki/Builder_pattern)
 typedef std::function<std::unique_ptr<TreeNode>(const std::string&, const NodeParameters&)> NodeBuilder;
 
 /// This information is used mostly by the XMLParser.
@@ -54,6 +60,8 @@ class BehaviorTreeFactory
     void registerSimpleCondition(const std::string& ID, const SimpleConditionNode::TickFunctor &tick_functor);
 
     void registerSimpleDecorator(const std::string& ID, const SimpleDecoratorNode::TickFunctor &tick_functor);
+
+    void registerFromPlugin(const std::string file_path);
 
     /**
      * @brief instantiateTreeNode creates a TreeNode
@@ -107,13 +115,14 @@ class BehaviorTreeFactory
         storeNodeModel<T>(ID);
     }
 
-    // All the builders. Made available mostly for debug purposes.
+    /// All the builders. Made available mostly for debug purposes.
     const std::map<std::string, NodeBuilder>& builders() const;
 
-    // Exposes all the TreeNodeModel.
+    /// Exposes all the TreeNodeModel.
     const std::vector<TreeNodeModel>& models() const;
 
   private:
+
     std::map<std::string, NodeBuilder> builders_;
     std::vector<TreeNodeModel> treenode_models_;
 

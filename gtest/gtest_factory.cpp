@@ -80,7 +80,7 @@ const std::string xml_text_subtree = R"(
 TEST(BehaviorTreeFactory, VerifyLargeTree)
 {
     BT::BehaviorTreeFactory factory;
-    CrossDoor::RegisterNodes(factory);
+    BT::RegisterNodes(factory);
 
     BT::XMLParser parser(factory);
     parser.loadFromText(xml_text);
@@ -137,7 +137,7 @@ TEST(BehaviorTreeFactory, VerifyLargeTree)
 TEST(BehaviorTreeFactory, Subtree)
 {
     BT::BehaviorTreeFactory factory;
-    CrossDoor::RegisterNodes(factory);
+    BT::RegisterNodes(factory);
 
     BT::XMLParser parser(factory);
     parser.loadFromText(xml_text_subtree);

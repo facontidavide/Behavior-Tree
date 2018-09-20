@@ -1,6 +1,11 @@
 #include "behavior_tree_core/xml_parsing.h"
 #include "Blackboard/blackboard_local.h"
+
+//#define MANUAL_STATIC_LINKING
+
+#ifdef MANUAL_STATIC_LINKING
 #include "dummy_nodes.h"
+#endif
 
 using namespace BT;
 
@@ -24,14 +29,18 @@ int main()
 {
     BehaviorTreeFactory factory;
 
-    Foo foo;
-    // This is the syntax to register SimpleActionNodes
-    factory.registerSimpleAction("SayHello", std::bind(SayHello) );
-    factory.registerSimpleAction("ActionOne", std::bind( &Foo::actionOne, &foo));
-    factory.registerSimpleAction("ActionTwo", std::bind( &Foo::actionTwo, &foo));
+#ifdef MANUAL_STATIC_LINKING
+        DummyNodes::RegisterNodes(factory);
+#else
+        factory.registerFromPlugin("libdummy_nodes.so");
+#endif
 
-    // If you want to register a class that inherits from a TReeNode, use this method instead
-    factory.registerNodeType<CustomAction>("CustomAction");
+    std::cout << "------ List of registered Nodes ------- " << std::endl;
+    for (auto& model: factory.models() )
+    {
+        std::cout << model.registration_ID << std::endl;
+    }
+    std::cout << "--------------------------------------- " << std::endl;
 
     // IMPORTANT: when the object tree goes out of scope, all the TreeNodes are destroyed
     auto tree = buildTreeFromText(factory, xml_text);

@@ -12,6 +12,7 @@
 */
 
 #include "behavior_tree_core/bt_factory.h"
+#include "behavior_tree_core/shared_library.h"
 
 namespace BT
 {
@@ -110,6 +111,23 @@ void BehaviorTreeFactory::registerSimpleDecorator(const std::string &ID,
 
     registerBuilder(ID, builder);
     storeNodeModel<SimpleDecoratorNode>(ID);
+}
+
+void BehaviorTreeFactory::registerFromPlugin(const std::string file_path)
+{
+    BT::SharedLibrary loader;
+    loader.load(file_path);
+    typedef void (*Func)(BehaviorTreeFactory&);
+
+    if(loader.hasSymbol(PLUGIN_SYMBOL))
+    {
+        Func func = (Func) loader.getSymbol(PLUGIN_SYMBOL);
+        func(*this);
+    }
+    else{
+        std::cout << "ERROR loading library [" << file_path << "]: can't find symbol ["<<
+                     PLUGIN_SYMBOL << "]" << std::endl;
+    }
 }
 
 std::unique_ptr<TreeNode> BehaviorTreeFactory::instantiateTreeNode(const std::string& ID, const std::string& name,

@@ -28,7 +28,8 @@ if(catkin_FOUND)
 else(catkin_FOUND)
 
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 	
     find_package(GTest)
     include_directories(${GTEST_INCLUDE_DIRS})
@@ -52,6 +53,7 @@ set(BT_Source
         src/bt_factory.cpp
         src/behavior_tree.cpp
         src/xml_parsing.cpp
+        src/shared_library_UNIX.cpp
 
         src/decorators/negation_node.cpp
         src/decorators/repeat_node.cpp
@@ -73,7 +75,7 @@ set(BT_Source
 )
 include_directories(include 3rdparty/)
 
-set(BEHAVIOR_TRE_LIBRARIES behavior_tree_core)
+set(BEHAVIOR_TREE_LIBRARIES behavior_tree_core)
 
 find_package(ZMQ)
 
@@ -82,7 +84,7 @@ if( ZMQ_FOUND )
     add_definitions( -DZMQ_FOUND )
     set(BT_Source ${BT_Source} src/loggers/bt_zmq_publisher.cpp )
 
-    set(BEHAVIOR_TRE_LIBRARIES behavior_tree_core zmq)
+    set(BEHAVIOR_TREE_LIBRARIES behavior_tree_core zmq)
 else()
     message(WARNING "ZeroMQ NOT found. Skipping the build of [PublisherZMQ] and [bt_recorder].")
 endif()
@@ -91,6 +93,8 @@ endif()
 # COMPILING LIBRARY
 ######################################################
 add_library(behavior_tree_core STATIC ${BT_Source} )
+target_compile_options(behavior_tree_core PRIVATE "-fPIC")
+target_link_libraries(behavior_tree_core dl)
 
 
 ######################################################
@@ -100,7 +104,7 @@ set(BT_Tests
         gtest/src/action_test_node.cpp
         gtest/src/condition_test_node.cpp
         gtest/gtest_tree.cpp
-        gtest/gtest_factory.cpp
+#        gtest/gtest_factory.cpp
 )
 
 if(catkin_FOUND AND CATKIN_ENABLE_TESTING)
@@ -131,24 +135,10 @@ target_link_libraries(bt_log_cat  behavior_tree_core )
 
 if( ZMQ_FOUND )
     add_executable(bt_recorder         tools/bt_recorder.cpp )
-    target_link_libraries(bt_recorder  ${BEHAVIOR_TRE_LIBRARIES} )
+    target_link_libraries(bt_recorder  ${BEHAVIOR_TREE_LIBRARIES} )
 endif()
 
-function(BuildExample filename)
-  add_executable(${filename} examples/${filename}.cpp )
-  target_link_libraries(${filename} ${BEHAVIOR_TRE_LIBRARIES} )
-endfunction()
-
-BuildExample(tutorial_programmatic_tree)
-BuildExample(tutorial_factory_tree)
-BuildExample(tutorial_sequence_star)
-BuildExample(tutorial_blackboard)
-BuildExample(crossdoor_example)
+add_subdirectory(sample_nodes)
+add_subdirectory(examples)
 
 
-######################################################
-# INSTALLATION OF LIBRARY AND EXECUTABLE
-######################################################
-
-
-#TODO
