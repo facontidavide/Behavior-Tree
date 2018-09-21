@@ -10,7 +10,7 @@ BT_REGISTER_NODES(factory)
 
 NodeStatus CrossDoor::IsDoorOpen(const Blackboard::Ptr &blackboard)
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(500) );
+    SleepMS(500);
     bool door_open = blackboard->get<bool>("door_open");
 
     return  door_open ? NodeStatus::SUCCESS : NodeStatus::FAILURE;
@@ -18,7 +18,7 @@ NodeStatus CrossDoor::IsDoorOpen(const Blackboard::Ptr &blackboard)
 
 NodeStatus CrossDoor::IsDoorLocked(const Blackboard::Ptr &blackboard)
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(500) );
+    SleepMS(500);
     bool door_locked = blackboard->get<bool>("door_locked");
 
     return door_locked ? NodeStatus::SUCCESS : NodeStatus::FAILURE;
@@ -26,7 +26,7 @@ NodeStatus CrossDoor::IsDoorLocked(const Blackboard::Ptr &blackboard)
 
 NodeStatus CrossDoor::UnlockDoor(const Blackboard::Ptr &blackboard)
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    SleepMS(2000);
     blackboard->set("door_locked", false);
 
     return NodeStatus::SUCCESS;
@@ -34,7 +34,7 @@ NodeStatus CrossDoor::UnlockDoor(const Blackboard::Ptr &blackboard)
 
 NodeStatus CrossDoor::PassThroughDoor(const Blackboard::Ptr &blackboard)
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    SleepMS(1000);
     bool door_open = blackboard->get<bool>("door_open");
 
     return door_open ? NodeStatus::SUCCESS : NodeStatus::FAILURE;
@@ -42,13 +42,13 @@ NodeStatus CrossDoor::PassThroughDoor(const Blackboard::Ptr &blackboard)
 
 NodeStatus CrossDoor::PassThroughWindow(const Blackboard::Ptr &blackboard)
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    SleepMS(1000);
     return NodeStatus::SUCCESS;
 }
 
 NodeStatus CrossDoor::OpenDoor(const Blackboard::Ptr &blackboard)
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    SleepMS(2000);
     bool door_locked = blackboard->get<bool>("door_locked");
 
     if (door_locked)
@@ -66,7 +66,7 @@ NodeStatus CrossDoor::CloseDoor(const Blackboard::Ptr &blackboard)
 
     if (door_open)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+        SleepMS(1500);
         blackboard->set("door_open", false);
     }
     return NodeStatus::SUCCESS;
@@ -74,7 +74,6 @@ NodeStatus CrossDoor::CloseDoor(const Blackboard::Ptr &blackboard)
 
 void CrossDoor::RegisterNodes(BehaviorTreeFactory &factory)
 {
-
     factory.registerSimpleCondition("IsDoorOpen",   IsDoorOpen );
     factory.registerSimpleAction("PassThroughDoor", PassThroughDoor );
     factory.registerSimpleAction("PassThroughWindow", PassThroughWindow );

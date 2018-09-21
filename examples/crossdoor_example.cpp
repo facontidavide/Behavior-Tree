@@ -47,6 +47,7 @@ int main()
 {
     BT::BehaviorTreeFactory factory;
 
+    // The state of the door is read/written using these keys of the blackboard.
     auto blackboard = Blackboard::create<BlackboardLocal>();
     blackboard->set("door_open", false);
     blackboard->set("door_locked", true);
@@ -68,6 +69,7 @@ int main()
     while( status == NodeStatus::RUNNING )
     {
         status = tree.root_node->executeTick();
+        CrossDoor::SleepMS(1); // optional sleep to avoid "busy loops"
     }
     return 0;
 }

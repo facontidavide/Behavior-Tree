@@ -53,6 +53,7 @@ set(BT_Source
         src/bt_factory.cpp
         src/behavior_tree.cpp
         src/xml_parsing.cpp
+        src/shared_library.cpp
         src/shared_library_UNIX.cpp
 
         src/decorators/negation_node.cpp

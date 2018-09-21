@@ -23,12 +23,6 @@
 
 #include "behavior_tree_core/behavior_tree.h"
 
-const char PLUGIN_SYMBOL[] = "BT_RegisterNodesFromPlugin";
-
-#define BT_REGISTER_NODES(factory)  \
-    extern "C" void __attribute__((visibility("default"))) BT_RegisterNodesFromPlugin( BT::BehaviorTreeFactory& factory )
-
-
 namespace BT
 {
 
@@ -55,12 +49,22 @@ class BehaviorTreeFactory
      */
     void registerBuilder(const std::string& ID, NodeBuilder builder);
 
+    /// Register a SimpleActionNode
     void registerSimpleAction(const std::string& ID, const SimpleActionNode::TickFunctor &tick_functor);
 
+    /// Register a SimpleConditionNode
     void registerSimpleCondition(const std::string& ID, const SimpleConditionNode::TickFunctor &tick_functor);
 
+    /// Register a SimpleDecoratorNode
     void registerSimpleDecorator(const std::string& ID, const SimpleDecoratorNode::TickFunctor &tick_functor);
 
+    /**
+     * @brief registerFromPlugin load a shared library and execute the function BT_REGISTER_NODES (see macro).
+     *
+     * This method may throw.
+     *
+     * @param file_path path of the file
+     */
     void registerFromPlugin(const std::string file_path);
 
     /**
@@ -118,7 +122,7 @@ class BehaviorTreeFactory
     /// All the builders. Made available mostly for debug purposes.
     const std::map<std::string, NodeBuilder>& builders() const;
 
-    /// Exposes all the storeNodeManifest.
+    /// Manifests of all the registered TreeNodes.
     const std::vector<TreeNodeManifest>& manifests() const;
 
   private:
@@ -126,7 +130,7 @@ class BehaviorTreeFactory
     std::map<std::string, NodeBuilder> builders_;
     std::vector<TreeNodeManifest> manifests_;
 
-    // template specialization + SFINAE + black magic
+    // template specialization = SFINAE + black magic
 
     // clang-format off
     template <typename T>
@@ -202,6 +206,27 @@ class BehaviorTreeFactory
 
     // clang-format on
 };
+
+const char PLUGIN_SYMBOL[] = "BT_RegisterNodesFromPlugin";
+
+/**
+  How to create a Plugin:
+
+  In the compilation unit where one or multiple TreeNodes are defined, the
+  function BT_REGISTER_NODES(factory) must be implemented (in the .cpp file, not the .h)
+
+  This function must register all the TreeNodes types.
+
+  In the CMakeFile.txt, include the command:
+
+        add_library(plugin_name SHARED plugin_file.cpp )
+
+  */
+
+#define BT_REGISTER_NODES(factory)  \
+    extern "C" void __attribute__((visibility("default"))) BT_RegisterNodesFromPlugin( BT::BehaviorTreeFactory& factory )
+
+
 
 }   // end namespace
 #endif   // BT_FACTORY_H

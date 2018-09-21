@@ -139,33 +139,6 @@ private:
     std::mutex _mutex;
 };
 
-//------------------------------------------------
-
-
-inline SharedLibrary::SharedLibrary(const std::string& path, int flags)
-{
-    load(path, flags);
-}
-
-
-inline bool SharedLibrary::hasSymbol(const std::string& name)
-{
-    return findSymbol(name) != 0;
-}
-
-inline void* SharedLibrary::getSymbol(const std::string& name)
-{
-    void* result = findSymbol(name);
-    if (result)
-        return result;
-    else
-        throw std::runtime_error(name);
-}
-
-inline std::string SharedLibrary::getOSName(const std::string& name)
-{
-    return prefix() + name + suffix();
-}
 
 } // namespace Poco
 

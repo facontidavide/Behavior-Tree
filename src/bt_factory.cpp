@@ -27,8 +27,11 @@ BehaviorTreeFactory::BehaviorTreeFactory()
     registerNodeType<RetryNode>("RetryUntilSuccesful");
     registerNodeType<RepeatNode>("Repeat");
 
-    registerNodeType<AlwaysSuccessNode>("AlwaysSuccess");
-    registerNodeType<AlwaysFailureNode>("AlwaysFailure");
+    registerNodeType<ForceSuccessDecorator>("ForceSuccess");
+    registerNodeType<ForceFailureDecorator>("ForceFailure");
+
+    registerNodeType<AlwaysSuccess>("AlwaysSuccess");
+    registerNodeType<AlwaysFailure>("AlwaysFailure");
 
     registerNodeType<DecoratorSubtreeNode>("SubTree");
 

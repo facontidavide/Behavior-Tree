@@ -8,17 +8,18 @@ int main()
     using namespace DummyNodes;
     Foo foo;
 
+    // sequence_root will be the root of our tree
     BT::SequenceNode sequence_root("sequence");
 
-    // Aimple funtions can be wrapped inside in ActionNodeBase
+    // Simple functions can be wrapped inside in ActionNodeBase
     // using the SimpleActionNode
     SimpleActionNode act_simple("action_hello", std::bind(SayHello) );
 
-    // SimpleActionNode warks also with class methods, using std::bind
+    // SimpleActionNode works also with class methods, using std::bind
     SimpleActionNode act_1("action_one", std::bind( &Foo::actionOne, &foo) );
     SimpleActionNode act_2("action_two", std::bind( &Foo::actionTwo, &foo) );
 
-    // Nevertheless, to be able to use ALL the funtionalities of a TreeNode,
+    // To be able to use ALL the functionalities of a TreeNode,
     //  your should create a class that inherits from either:
     // - ConditionNode  (synchronous execution)
     // - ActionNodeBase (synchronous execution)
@@ -32,9 +33,9 @@ int main()
     sequence_root.addChild(&act_2);
     sequence_root.addChild(&act_custom);
 
-    // the tick is propagated to all the children.
-    // until one of the returns FAILURE or RUNNING.
-    // In this case all of the return SUCCESS
+    // The tick is propagated to all the children.
+    // until one of them returns FAILURE or RUNNING.
+    // In this case all of them return SUCCESS immediately
     sequence_root.executeTick();
 
     return 0;
