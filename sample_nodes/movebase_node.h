@@ -42,19 +42,25 @@ template <> Pose2D convertFromString(const std::string& key)
 }
 
 // This is an asynchronous operation that will run in a separate thread.
-// It requires the NodeParameter "goal"
+// It requires the NodeParameter "goal". If the key is not provided, the default
+// value "0;0;0" is used instead.
 
 class MoveBaseAction: public BT::ActionNode
 {
 public:
-    // When your TreeNode requires a NodeParameter, use this
-    // kind of constructor
+    // If your TreeNode requires a NodeParameter, you must define a constructor
+    // with this signature.
     MoveBaseAction(const std::string& name, const BT::NodeParameters& params):
         ActionNode(name, params) {}
 
-    // This is mandatory to tell to the factory which parameter(s)
-    // are required
-    static const BT::NodeParameters& requiredNodeParameters();
+    // It is mandatory to define this static method.
+    // If you don't, BehaviorTreeFactory::registerNodeType will not compile.
+    //
+    static const BT::NodeParameters& requiredNodeParameters()
+    {
+        static BT::NodeParameters params = {{"goal","0;0;0"}};
+        return params;
+    }
 
     BT::NodeStatus tick() override;
 

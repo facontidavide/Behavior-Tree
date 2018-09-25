@@ -14,40 +14,71 @@ BT::NodeStatus CheckBattery();
 BT::NodeStatus CheckTemperature();
 
 
-class Foo
+class GripperInterface
 {
 public:
-    Foo(): _val(0) {}
+    GripperInterface(): _opened(true) {}
 
-    BT::NodeStatus actionOne();
+    BT::NodeStatus open();
 
-    BT::NodeStatus actionTwo();
+    BT::NodeStatus close();
 
 private:
-    int _val;
+    bool _opened;
 };
 
 //--------------------------------------
 
-class CustomAction: public BT::ActionNodeBase
+// Example of custom ActionNodeBase (synchronous action)
+// without NodeParameters.
+class ApproachObject: public BT::ActionNodeBase
 {
 public:
-    CustomAction(const std::string& name):
+    ApproachObject(const std::string& name):
         BT::ActionNodeBase(name) {}
 
+    // You must override the virtual function tick()
     BT::NodeStatus tick() override;
+
+    // You must override the virtual function halt()
     virtual void halt() override;
 };
 
+// Example of custom ActionNodeBase (synchronous action)
+// with NodeParameters.
+class SaySomething: public BT::ActionNodeBase
+{
+public:
+    SaySomething(const std::string& name, const BT::NodeParameters& params):
+        BT::ActionNodeBase(name, params) {}
+
+    // You must override the virtual function tick()
+    BT::NodeStatus tick() override;
+
+    // You must override the virtual function halt()
+    virtual void halt() override {}
+
+    // It is mandatory to define this static method.
+    // If you don't, BehaviorTreeFactory::registerNodeType will not compile.
+    //
+    static const BT::NodeParameters& requiredNodeParameters()
+    {
+        static BT::NodeParameters params = {{"message",""}};
+        return params;
+    }
+};
+
+
 inline void RegisterNodes(BT::BehaviorTreeFactory& factory)
 {
-    static Foo foo;
+    static GripperInterface gi;
     factory.registerSimpleAction("SayHello", std::bind(SayHello) );
     factory.registerSimpleCondition("CheckBattery", std::bind(CheckBattery) );
     factory.registerSimpleCondition("CheckTemperature", std::bind(CheckTemperature) );
-    factory.registerSimpleAction("ActionOne", std::bind( &Foo::actionOne, &foo));
-    factory.registerSimpleAction("ActionTwo", std::bind( &Foo::actionTwo, &foo));
-    factory.registerNodeType<CustomAction>("CustomAction");
+    factory.registerSimpleAction("OpenGripper",  std::bind( &GripperInterface::open, &gi));
+    factory.registerSimpleAction("CloseGripper", std::bind( &GripperInterface::close, &gi));
+    factory.registerNodeType<ApproachObject>("ApproachObject");
+    factory.registerNodeType<SaySomething>("SaySomething");
 }
 
 }

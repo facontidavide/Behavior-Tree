@@ -13,7 +13,7 @@ namespace DummyNodes
 
 BT::NodeStatus SayHello()
 {
-    std::cout << "Hello!!!" << std::endl;
+    std::cout << "Robot says: \"Hello!!!\"" << std::endl;
     return BT::NodeStatus::SUCCESS;
 }
 
@@ -29,29 +29,42 @@ BT::NodeStatus CheckTemperature()
     return BT::NodeStatus::SUCCESS;
 }
 
-BT::NodeStatus Foo::actionOne()
+BT::NodeStatus GripperInterface::open()
 {
-    _val = 42;
-    std::cout << "Foo::actionOne -> set val to 42" << std::endl;
+    _opened = true;
+    std::cout << "GripperInterface::open" << std::endl;
     return BT::NodeStatus::SUCCESS;
 }
 
-BT::NodeStatus Foo::actionTwo()
+BT::NodeStatus GripperInterface::close()
 {
-    std::cout << "Foo::actionTwo -> reading val => "<< _val << std::endl;
-    _val = 0;
+    std::cout << "GripperInterface::close" << std::endl;
+    _opened = false;
     return BT::NodeStatus::SUCCESS;
 }
 
-BT::NodeStatus CustomAction::tick()
+BT::NodeStatus ApproachObject::tick()
 {
-    std::cout << "CustomAction: " << this->name() << std::endl;
+    std::cout << "ApproachObject: " << this->name() << std::endl;
     return BT::NodeStatus::SUCCESS;
 }
 
-void CustomAction::halt()
+void ApproachObject::halt()
 {
     setStatus(BT::NodeStatus::IDLE);
+}
+
+BT::NodeStatus SaySomething::tick()
+{
+    std::string msg;
+    if(  getParam("message", msg) )
+    {
+        std::cout << "Robot says: \"" << msg << "\"" <<std::endl;
+        return BT::NodeStatus::SUCCESS;
+    }
+    else{
+        return BT::NodeStatus::FAILURE;
+    }
 }
 
 }

@@ -17,9 +17,10 @@ const std::string xml_text = R"(
      <BehaviorTree ID="MainTree">
         <Sequence name="root_sequence">
             <SayHello       name="action_hello"/>
-            <ActionOne      name="action_one"/>
-            <ActionTwo      name="action_two"/>
-            <CustomAction   name="my_action"/>
+            <OpenGripper    name="open_gripper"/>
+            <ApproachObject name="approach_object"/>
+            <CloseGripper   name="close_gripper"/>
+            <SaySomething   name="say_done" message="mission completed!" />
         </Sequence>
      </BehaviorTree>
 
@@ -52,11 +53,12 @@ int main()
     factory.registerSimpleCondition("CheckBattery", std::bind(CheckBattery) );
     factory.registerSimpleCondition("CheckTemperature", std::bind(CheckTemperature) );
 
-    Foo foo;
-    factory.registerSimpleAction("ActionOne", std::bind( &Foo::actionOne, &foo));
-    factory.registerSimpleAction("ActionTwo", std::bind( &Foo::actionTwo, &foo));
+    GripperInterface gripper;
+    factory.registerSimpleAction("OpenGripper", std::bind( &GripperInterface::open, &gripper));
+    factory.registerSimpleAction("CloseGripper", std::bind( &GripperInterface::close, &gripper));
 
-    factory.registerNodeType<CustomAction>("CustomAction");
+    factory.registerNodeType<ApproachObject>("ApproachObject");
+    factory.registerNodeType<SaySomething>("SaySomething");
 #else
     // Load dynamically a plugin and register the TreeNodes it contains
     factory.registerFromPlugin("./libdummy_nodes.so");
