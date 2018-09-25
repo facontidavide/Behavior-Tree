@@ -22,7 +22,7 @@ if(catkin_FOUND)
   message(STATUS "------------------------------------------")
 
   catkin_package(
-    INCLUDE_DIRS include
+    INCLUDE_DIRS include 3rdparty
     LIBRARIES behavior_tree_core
     )
 else(catkin_FOUND)
@@ -143,7 +143,9 @@ BuildExample(tutorial_programmatic_tree)
 BuildExample(tutorial_factory_tree)
 BuildExample(tutorial_sequence_star)
 BuildExample(tutorial_blackboard)
-BuildExample(crossdoor_example)
+if( ZMQ_FOUND )
+    BuildExample(crossdoor_example)
+endif()
 
 
 ######################################################
