@@ -39,6 +39,10 @@ struct Tree
 {
    TreeNode* root_node;
    std::vector<TreeNode::Ptr> nodes;
+   ~Tree()
+   {
+       HaltAllActions(root_node);
+   }
 };
 
 /** Helper function to do the most common steps all at once:

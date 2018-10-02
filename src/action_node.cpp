@@ -54,29 +54,21 @@ ActionNode::ActionNode(const std::string& name, const NodeParameters& parameters
 }
 
 ActionNode::~ActionNode()
-{
-    if (thread_.joinable())
-    {
-        stopAndJoinThread();
-    }
-}
+{}
 
 void ActionNode::waitForTick()
 {
-    while (loop_.load())
+    while (loop_)
     {
         tick_engine_.wait();
 
         // check this again because the tick_engine_ could be
         // notified from the method stopAndJoinThread
-        if (loop_.load())
+        if (loop_ && status() == NodeStatus::IDLE)
         {
-            if (status() == NodeStatus::IDLE)
-            {
-                setStatus(NodeStatus::RUNNING);
-            }
-            setStatus(tick());
+            setStatus(NodeStatus::RUNNING);
         }
+        setStatus( loop_ ? tick() : status() );
     }
 }
 
@@ -96,8 +88,13 @@ NodeStatus ActionNode::executeTick()
 
 void ActionNode::stopAndJoinThread()
 {
+    halt();
     loop_.store(false);
     tick_engine_.notify();
-    thread_.join();
+    if (thread_.joinable())
+    {
+        thread_.join();
+    }
 }
+
 }

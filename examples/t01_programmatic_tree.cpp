@@ -46,5 +46,9 @@ int main()
     // In this case all of them return SUCCESS immediately
     sequence_root.executeTick();
 
+    // A tree created programmatically MUST be stopped
+    // using this command.
+    HaltAllActions(&sequence_root);
+
     return 0;
 }

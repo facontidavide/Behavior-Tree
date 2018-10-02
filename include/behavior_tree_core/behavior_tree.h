@@ -50,6 +50,8 @@ void printTreeRecursively(const TreeNode* root_node);
 void assignBlackboardToEntireTree(TreeNode* root_node,
                                  const Blackboard::Ptr& bb);
 
+void HaltAllActions(TreeNode* root_node);
+
 typedef std::vector<std::pair<uint16_t, uint8_t>> SerializedTreeStatus;
 
 /**
