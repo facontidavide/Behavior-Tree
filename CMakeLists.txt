@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(behavior_tree_core)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11 -pthread -Werror=return-type -fsanitize=thread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11 -pthread -Werror=return-type")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 #############################################################
@@ -94,7 +94,7 @@ endif()
 # COMPILING LIBRARY
 ######################################################
 add_library(behavior_tree_core STATIC ${BT_Source} )
-target_compile_options(behavior_tree_core PRIVATE "-fPIC")
+target_compile_options(behavior_tree_core PRIVATE "-shared")
 target_link_libraries(behavior_tree_core dl)
 
 
@@ -113,7 +113,8 @@ if(catkin_FOUND AND CATKIN_ENABLE_TESTING)
 
     catkin_add_gtest(behavior_tree_core_test ${BT_Tests} )
     target_link_libraries(behavior_tree_core_test
-        behavior_tree_core
+        ${BEHAVIOR_TREE_LIBRARIES}
+        crossdoor_nodes
         ${catkin_LIBRARIES} )
 	    
 elseif(GTEST_FOUND)
@@ -121,11 +122,9 @@ elseif(GTEST_FOUND)
 
     add_executable(behavior_tree_core_test ${BT_Tests} )
     target_link_libraries(behavior_tree_core_test
-        behavior_tree_core
+        ${BEHAVIOR_TREE_LIBRARIES} crossdoor_nodes
         ${GTEST_LIBRARIES}
-        ${GTEST_MAIN_LIBRARIES}
-        crossdoor_nodes)
-		
+        ${GTEST_MAIN_LIBRARIES} )
 endif()
 
 ######################################################
@@ -142,7 +141,6 @@ endif()
 
 add_executable(bt_plugin_manifest         tools/bt_plugin_manifest.cpp )
 target_link_libraries(bt_plugin_manifest  ${BEHAVIOR_TREE_LIBRARIES} )
-
 
 add_subdirectory(sample_nodes)
 add_subdirectory(examples)

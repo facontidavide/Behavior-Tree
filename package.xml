@@ -11,6 +11,7 @@
   <license>MIT</license>
 
   <author>Michele Colledanchise</author>
+  <author>Davide Faconti</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 
