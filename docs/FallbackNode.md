@@ -59,6 +59,7 @@ Try different strategies to open the door. Check first if it is open already.
 		state = FAILURE;
 		HaltAllChildren();
 		return state;
+	```	
 
 
 

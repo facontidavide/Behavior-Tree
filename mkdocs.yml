@@ -37,6 +37,6 @@ pages:
        - Decorators Nodes: DecoratorNode.md
        - The BlackBoard:   BlackBoard.md
     - Getting Started: 
-       - How to use the library: getting_started.md
-       - BT at run-time: getting_started.md
-       - Examples: getting_started.md
+       - Main concepts: getting_started.md
+       - How to create a Tree: tutorial_A_create_trees.md
+
