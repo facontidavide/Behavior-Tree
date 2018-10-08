@@ -1,9 +1,9 @@
 # Sequences
 
 A __Sequence__ ticks all it's children, from left to right, as long as 
-they return SUCCESS. If any child returns FAILURE, the sequence is suspended.
+they return SUCCESS. If any child returns FAILURE, the sequence is aborted.
 
-Here we introduce different kinds of TreeNodes:
+Here we introduce different kinds of sequence nodes:
 
 - SequenceNode
 - SequenceStarNode
@@ -19,8 +19,7 @@ Use __SequenceNode__ if you answer is:
 
 Use __SequenceStarNode__ if, instead, the answer is: 
 
-
-    A: "Try again to execute the failed child.
+    A: "Try again to execute the child that failed.
         Do not re-tick children which succeeded already."
    
 Last, use __SequenceAllNode__ when you want all the children to be ticked at least
@@ -28,16 +27,16 @@ once. If any of them failed, the SequenceAllNode returns FAILURE.
 
 The shared logic is:
 
-- Before ticking the first child, SequenceNode becomes __RUNNING__.
+- Before ticking the first child, sequence becomes __RUNNING__.
 - If a child returns __SUCCESS__, it ticks the next child.
 - If the __last__ child returns __SUCCESS__ too, all the children are halted and
- the SequenceNode returns __SUCCESS__.
+ the sequence returns __SUCCESS__.
 - If a child returns __RUNNING__, the sequence suspends and returns __RUNNING__. 
 The next time it is ticked, it will tick the same child again.
 
-The three Sequences differ in what they do if a child returns FAILURE.
+The three sequences differ in what they do if a child returns FAILURE.
 
-## SequenceNode
+## SequenceNode (default)
 
 If a child returns FAILURE, the sequence returns FAILURE.
 Reset the index and halt all the children. 
