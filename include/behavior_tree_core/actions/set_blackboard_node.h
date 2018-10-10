@@ -42,7 +42,7 @@ class SetBlackboard : public ActionNodeBase
         else{
             std::string value;
             getParam("value",value);
-            blackboard()->set("key",value);
+            blackboard()->set(key,value);
             return NodeStatus::SUCCESS;
         }
     }

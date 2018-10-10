@@ -15,8 +15,8 @@ using namespace BT;
 
  *  1) Store a value of Pose2D in the key "GoalPose" of the blackboard using the action CalculateGoalPose.
  *  2) Call MoveAction. The NodeParameter "goal"  will be read from the Blackboard at run-time.
- *  3) Use the built-in action SetBlackboard to write the key "GoalPose".
- *  4) Call MoveAction. The NodeParameter "goal" will be read from the Blackboard at run-time.
+ *  3) Use the built-in action SetBlackboard to write the key "OtherGoal".
+ *  4) Call MoveAction. The NodeParameter "goal" will be read from the Blackboard entry "OtherGoal".
  *
 */
 
@@ -24,36 +24,35 @@ using namespace BT;
 const std::string xml_text = R"(
 
  <root main_tree_to_execute = "MainTree" >
-
      <BehaviorTree ID="MainTree">
         <SequenceStar name="root">
             <CalculateGoalPose/>
             <MoveBase  goal="${GoalPose}" />
-            <SetBlackboard key="GoalPose" value="-1;3;0.5" />
-            <MoveBase  goal="${GoalPose}" />
+            <SetBlackboard key="OtherGoal" value="-1;3;0.5" />
+            <MoveBase  goal="${OtherGoal}" />
         </SequenceStar>
      </BehaviorTree>
-
  </root>
  )";
 
 // clang-format on
 
 // Write into the blackboard key: [GoalPose]
-// Use this function signature to create a SimpleAction that needs the blackboard
+// Use this function to create a SimpleActionNode that can access the blackboard
 NodeStatus CalculateGoalPose(TreeNode& self)
 {
     const Pose2D mygoal = { 1, 2, M_PI};
 
-    // RECOMMENDED: check if the blackboard is nullptr
+    // RECOMMENDED: check if the blackboard is nullptr first
     if( self.blackboard() )
     {
         // store it in the blackboard
         self.blackboard()->set("GoalPose", mygoal);
+        return NodeStatus::SUCCESS;
     }
-
-    printf("[CalculateGoalPose]\n");
-    return NodeStatus::SUCCESS;
+    else{
+        return NodeStatus::FAILURE;
+    }
 }
 
 int main()
@@ -76,6 +75,5 @@ int main()
         status = tree.root_node->executeTick();
         SleepMS(1); // optional sleep to avoid "busy loops"
     }
-
     return 0;
 }
