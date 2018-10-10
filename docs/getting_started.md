@@ -1,7 +1,7 @@
 # Getting started
 
 __BehaviorTree.CPP__ is a C++ library that can be easily integrated into
-your favourite distributed middleware, such as __ROS__ of __SmartSoft__.
+your favourite distributed middleware, such as __ROS__ or __SmartSoft__.
 
 You can also statically link it into your application (for example a game).
 

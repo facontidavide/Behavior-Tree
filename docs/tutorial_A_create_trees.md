@@ -87,7 +87,7 @@ private:
 
 ``` 
 
-We can build a __SimpleActionNode__ from any of these functors:
+We can build a `SimpleActionNode` from any of these functors:
 
 - SayHello()
 - GripperInterface::open()
@@ -142,7 +142,6 @@ Give the following XML stored in the file __my_tree.xml__
 
 ``` XML
  <root main_tree_to_execute = "MainTree" >
-
      <BehaviorTree ID="MainTree">
         <Sequence name="root_sequence">
             <SayHello       name="action_hello"/>
@@ -151,19 +150,36 @@ Give the following XML stored in the file __my_tree.xml__
             <CloseGripper   name="close_gripper"/>
         </Sequence>
      </BehaviorTree>
-
  </root>
 ```
 
-We must first register our custom TreeNodes into the __BehaviorTreeFactory__
+Note that the following syntax is also valid:
+
+``` XML
+ <root main_tree_to_execute = "MainTree" >
+     <BehaviorTree ID="MainTree">
+        <Sequence name="root_sequence">
+            <Action ID="SayHello"       name="action_hello"/>
+            <Action ID="OpenGripper"    name="open_gripper"/>
+            <Action ID="ApproachObject" name="approach_object"/>
+            <Action ID="CloseGripper"   name="close_gripper"/>
+        </Sequence>
+     </BehaviorTree>
+ </root>
+```
+
+We must first register our custom TreeNodes into the `BehaviorTreeFactory`
  and then load the XML from file or text.
 
-The names used in the XML must conincide with those used to register
+The identifier used in the XML must coincide with those used to register
 the TreeNodes.
 
 The attribute "name" represent the name of the instance and it is optional.
 
+
 ``` c++
+#include "behavior_tree_core/xml_parsing.h"
+#include "Blackboard/blackboard_local.h"
 #include "dummy_nodes.h"
 
 int main()
