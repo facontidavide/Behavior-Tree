@@ -1,12 +1,12 @@
-# How to create Trees
+# How to create a BehaviorTree
 
 You have mainly two ways to create Behavior Trees.
 
-- __Statically, at compilation time__.
-- __Dynamically, at run-time__, i.e. parsing a file.
+- __Statically__, at compilation time.
+- __Dynamically__, at run-time, i.e. parsing a file.
 
-You are strongly encourage to use the latter approach, but we will describe
-the first for the sake of completeness.
+You are __strongly encourage to use the latter approach__, but we will describe
+the former for the sake of completeness.
 
 ## How to create your own ActionNodes
 
@@ -22,37 +22,37 @@ public:
     ApproachObject(const std::string& name):
         BT::ActionNodeBase(name) {}
 
-    // You must override the virtual function tick()
+    // You must override this virtual function
     BT::NodeStatus tick() override
     {
 		std::cout << "ApproachObject: " << this->name() << std::endl;
 		return BT::NodeStatus::SUCCESS;
 	}
 
-    // You must override the virtual function halt()
+    // You must override this virtual function
     virtual void halt() override 
     {
-		// Do nothing. This is used by asynchronous nodes.
+		// Do nothing. This is used by asynchronous nodes only.
     }
 };
 ``` 
 
 As you can see:
 
-- Any TreeNode as a name. This identifier is meant to be user-readable and it 
+- Any instance of a TreeNode has a name. This identifier is meant to be user-readable and it 
  doesn't need to be unique.
  
 - The method __tick()__ is the place where the actual Action takes place.
-It must return a NodeStatus RUNNING, SUCCESS or FAILURE. 
+It must return a NodeStatus, i.e. RUNNING, SUCCESS or FAILURE. 
 
 - The method __halt()__ is used to stop an asynchronous Action. ApproachObject
 doesn't need it.
  
  
-Alternatively, we can use __dependecy injection to create a TreeNode given 
-a __functor__ (function pointer). 
+Alternatively, we can use __dependecy injection__ to create a TreeNode given 
+a function pointer. 
 
-The only requirement of the funtor is to have either one of these signatures:
+The only requirement of the functor is to have either one of these signatures:
 
     BT::NodeStatus myFunction()
     BT::NodeStatus myFunction(TreeNode& self) 
@@ -60,7 +60,7 @@ The only requirement of the funtor is to have either one of these signatures:
 
 ``` c++
 BT::NodeStatus SayHello() {
-    std::cout << "Robot says: \"Hello!!!\"" << std::endl;
+    std::cout << "Robot says Hello" << std::endl;
     return BT::NodeStatus::SUCCESS;
 }
 
@@ -87,7 +87,7 @@ private:
 
 ``` 
 
-In the example, we can build a __SimpleActionNode__ from:
+We can build a __SimpleActionNode__ from any of these functors:
 
 - SayHello()
 - GripperInterface::open()
@@ -95,7 +95,6 @@ In the example, we can build a __SimpleActionNode__ from:
 
 
 ## Tutorial 01: a statically created Tree
-
 
 
 ``` c++
@@ -157,8 +156,12 @@ Give the following XML stored in the file __my_tree.xml__
 ```
 
 We must first register our custom TreeNodes into the __BehaviorTreeFactory__
- and the load the XMl from file or text.
+ and the load the XML from file or text.
 
+The names used in the XML must conincide with those used to register
+the TreeNodes.
+
+The attribute "name" represent the name of the instance and it is optional.
 
 ``` c++
 #include "dummy_nodes.h"
@@ -179,8 +182,8 @@ int main()
 
     factory.registerNodeType<ApproachObject>("ApproachObject");
 
-    // IMPORTANT: when the object tree goes out of scope,
-    // all the TreeNodes are destroyed
+    // IMPORTANT: when the object "tree" goes out of scope,
+    // all the TreeNodes instances are destroyed
     auto tree = buildTreeFromFile(factory, "./my_tree.xml");
 
     tree.root_node->executeTick();

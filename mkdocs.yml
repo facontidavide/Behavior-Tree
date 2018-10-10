@@ -39,4 +39,5 @@ pages:
     - Getting Started: 
        - Main concepts: getting_started.md
        - How to create a Tree: tutorial_A_create_trees.md
+       - Add NodeParameters:   tutorial_B_node_parameters.md
 
