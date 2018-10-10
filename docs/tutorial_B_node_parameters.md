@@ -16,7 +16,7 @@ To create a TreeNodes that accepts NodeParameters, you must follow these rules:
 MyAction(const std::string& name, const BT::NodeParameters& params) 
 ```
 
-- The following static member funtion must be defined:
+- The following static member function must be defined:
 
 ``` c++
 static const BT::NodeParameters& requiredNodeParameters()
@@ -68,14 +68,6 @@ public:
     }
 };
 ```
-
-To pass the parameter "message" in the XML representation, use an attribute
-with the same name:
-
-``` XML
-<SaySomething message="Hello World"/>
-```
-
 
 
 ## Example: conversion to user defined C++ types
@@ -177,10 +169,16 @@ private:
 
 ```
 
-The corresponding XML representation, given (x=41.2 , y= 13.5, theta = 0.7),
-would be:
+## NodeParameters in the XML
+
+
+To pass the parameter in the XML, use an attribute
+with the same name:
 
 ``` XML
 <MoveBaseAction goal="41.2;13.5;0.7"/>
+<SaySomething   message="Destination reached"/>
 ```
+
+
 

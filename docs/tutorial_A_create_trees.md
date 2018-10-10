@@ -156,7 +156,7 @@ Give the following XML stored in the file __my_tree.xml__
 ```
 
 We must first register our custom TreeNodes into the __BehaviorTreeFactory__
- and the load the XML from file or text.
+ and then load the XML from file or text.
 
 The names used in the XML must conincide with those used to register
 the TreeNodes.

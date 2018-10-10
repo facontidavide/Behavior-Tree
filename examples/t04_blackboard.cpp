@@ -13,9 +13,9 @@ using namespace BT;
  *
  * The tree is a Sequence of 4 actions
 
- *  1) Store a value of Pose2D in the key "GoalPose" of the blackboard.
- *  2) Call PrintGoalPose. It will read "GoalPose" from the blackboard.
- *  3) Call MoveAction. The NodeParameter "goal" is provided by the XML itself at the beginning.
+ *  1) Store a value of Pose2D in the key "GoalPose" of the blackboard using the action CalculateGoalPose.
+ *  2) Call MoveAction. The NodeParameter "goal"  will be read from the Blackboard at run-time.
+ *  3) Use the built-in action SetBlackboard to write the key "GoalPose".
  *  4) Call MoveAction. The NodeParameter "goal" will be read from the Blackboard at run-time.
  *
 */
@@ -28,8 +28,8 @@ const std::string xml_text = R"(
      <BehaviorTree ID="MainTree">
         <SequenceStar name="root">
             <CalculateGoalPose/>
-            <PrintGoalPose />
-            <MoveBase  goal="2;4;0" />
+            <MoveBase  goal="${GoalPose}" />
+            <SetBlackboard key="GoalPose" value="-1;3;0.5" />
             <MoveBase  goal="${GoalPose}" />
         </SequenceStar>
      </BehaviorTree>
@@ -56,38 +56,12 @@ NodeStatus CalculateGoalPose(TreeNode& self)
     return NodeStatus::SUCCESS;
 }
 
-// Read from the blackboard key: [GoalPose]
-class PrintGoalPose: public ActionNodeBase
-{
-public:
-    PrintGoalPose(const std::string& name): ActionNodeBase(name) {}
-
-    NodeStatus tick() override
-    {
-        Pose2D goal;
-        // RECOMMENDED: check if the blackboard is empty
-        if( blackboard() && blackboard()->get("GoalPose", goal) )
-        {
-            printf("[PrintGoalPose] x=%.f y=%.1f theta=%.2f\n",
-                   goal.x, goal.y, goal.theta);
-            return NodeStatus::SUCCESS;
-        }
-        else{
-           printf("The blackboard does not contain the key [GoalPose]\n");
-           return NodeStatus::FAILURE;
-        }
-    }
-
-    virtual void halt() override { setStatus(NodeStatus::IDLE); }
-};
-
 int main()
 {
     using namespace BT;
 
     BehaviorTreeFactory factory;
     factory.registerSimpleAction("CalculateGoalPose", CalculateGoalPose);
-    factory.registerNodeType<PrintGoalPose>("PrintGoalPose");
     factory.registerNodeType<MoveBaseAction>("MoveBase");
 
     // create a Blackboard from BlackboardLocal (simple, not persistent, local storage)
