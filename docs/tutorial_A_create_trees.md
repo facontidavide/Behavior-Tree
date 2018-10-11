@@ -10,7 +10,7 @@ the former for the sake of completeness.
 
 ## How to create your own ActionNodes
 
-You can find the source code here: [dummy_nodes.h](../sample_nodes/ dummy_nodes.h)
+You can find the source code here: [dummy_nodes.h](../sample_nodes/dummy_nodes.h)
 
 The default (and recommended) way to create a TreeNode is by inheritance.
 
@@ -93,9 +93,7 @@ We can build a `SimpleActionNode` from any of these functors:
 - GripperInterface::open()
 - GripperInterface::close()
 
-
-## Tutorial 01: a statically created Tree
-
+## A static Tree
 
 ``` c++
 #include "dummy_nodes.h"
@@ -136,7 +134,7 @@ int main()
 
 ``` 
 
-## Tutorial 02: a dynamically created Tree
+## A dynamically created Tree
 
 Give the following XML stored in the file __my_tree.xml__
 

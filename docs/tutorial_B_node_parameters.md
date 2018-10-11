@@ -37,14 +37,23 @@ Please note:
 - The __static__ method `requiredNodeParameters()` contains a single key/value pair.
   The string "default message" is the default value.
   
-- Parameters MUST be accessed using the method __getParam()__.  
+- Parameters MUST be accessed using the method `getParam()`, preferably in the
+`tick()` method, since this value may change over time.  
 
-``` c++ hl_lines="4  10 22"
+``` c++ hl_lines="5 9 18"
 class SaySomething: public ActionNodeBase
 {
 public:
+    // There must be a constructor with this signature
     SaySomething(const std::string& name, const NodeParameters& params):
         ActionNodeBase(name, params) {}
+
+    // It is mandatory to define this static method.
+    static const NodeParameters& requiredNodeParameters()
+    {
+        static NodeParameters params = {{"message","default message"}};
+        return params;
+    }
 
     virtual NodeStatus tick() override
     {
@@ -57,15 +66,7 @@ public:
 		std::cout << "Robot says: " << msg << std::endl;
 		return BT::NodeStatus::SUCCESS;
 	}
-
     virtual void halt() override {}
-
-    // It is mandatory to define this static method.
-    static const NodeParameters& requiredNodeParameters()
-    {
-        static NodeParameters params = {{"message","default message"}};
-        return params;
-    }
 };
 ```
 
@@ -83,19 +84,21 @@ struct Pose2D
 
 If we want the method `getParam()` to be able to parse a string
 and store its value into a Pose2D, we must provide our own specialization
-of `convertFromString<>()`.
+of `convertFromString<T>()`.
 
 In this case, we want to represent Pose2D as three real numbers separated by 
 semicolons.
 
-``` c++ hl_lines="5"
+``` c++ hl_lines="6"
+// use this namespace
 namespace BT{
 
 // This template specialization is needed if you want
 // to AUTOMATICALLY convert a NodeParameter into a Pose2D
-template <> Pose2D convertFromString(const std::string& key)
+template <> Pose2D BT::convertFromString(const std::string& key)
 {
-    // Three real numbers separated by semicolons
+    // Three real numbers separated by semicolons.
+    // You may use <boost/algorithm/string/split.hpp>  if you prefer
     auto parts = BT::splitString(key, ';');
     if( parts.size() != 3)
     {
@@ -109,9 +112,11 @@ template <> Pose2D convertFromString(const std::string& key)
         return output;
     }
 }
+
+} // end naespace
 ```
 
-We now define a synchronous ActionNode called __MoveBaseAction__.
+We now define a __asynchronous__ ActionNode called __MoveBaseAction__.
 
 The method `getParam()` will call the function `convertFromString<Pose2D>()` under the hood;
 alternatively, we can use the latter directly, for instance to convert the default
@@ -139,7 +144,7 @@ public:
 	    Pose2D goal;
         if( getParam<Pose2D>("goal", goal) == false )
         {
-            auto default_goal_value =  requiredNodeParameters().at("goal");
+            auto default_goal =  requiredNodeParameters().at("goal");
             goal = BT::convertFromString<Pose2D>( default_goal_value );
         }
         
@@ -149,14 +154,15 @@ public:
 		halt_requested_ = false;
 		
 		int count = 0;
-		// "compute" for 250 milliseconds or until halt_requested_ is true
+		// "compute" for 250 milliseconds or until halt_requested_
 		while( !halt_requested_ && count++ < 25)
 		{
 			SleepMilliseconds(10);
 		}
 
 		std::cout << "[ MoveBase: FINISHED ]" << std::endl;
-		return halt_requested_ ? NodeStatus::SUCCESS : NodeStatus::SUCCESS;
+		return halt_requested_ ? NodeStatus::FAILURE : 
+		                         NodeStatus::SUCCESS;
 	}
 
 	virtual void halt() override 
