@@ -1,9 +1,9 @@
 # Blackboards
 
-The blackboard is a a key/value storage that can be shared by all the Nodes
+The blackboard is a a __key/value__ storage that can be shared by all the Nodes
 of a tree.
 
-The __key__ is a string and the value is a type-erased container (called `SafeAny::Any`) 
+The __key__ is a string whilst the __value__ is a type-erased container (called `SafeAny::Any`) 
 that allows the user to store any C++ object and to cast it back to its original form.
 
 Contrariwise to `boost::any` and `std::any`, this container will also try to 
@@ -19,7 +19,6 @@ The user can create his/her own Blackboards backend; it is possible, for instanc
 to create a persistent blackboard using a database.
 
 ## Assign a blackboard to a tree
-
 
 Let's start with the a `SimpleActionNode` that writes into the blackboard.
 
@@ -38,15 +37,16 @@ NodeStatus CalculateGoalPose(TreeNode& self)
         return NodeStatus::SUCCESS;
     }
     else{
+		// No blackboard passed to this node.
 		return NodeStatus::FAILURE;
 	}
 }
 ```
 
-Let's consider now the following XML tree definition:
+Let's consider the following XML tree definition:
 
 ``` XML
- <root main_tree_to_execute = "MainTree" >
+ <root main_tree_to_execute = "MainTree">
      <BehaviorTree ID="MainTree">
         <SequenceStar>
             <CalculateGoalPose/>
@@ -60,16 +60,16 @@ Let's consider now the following XML tree definition:
 
 The root SequenceStar will execute four actions:
 
-- CalculateGoalPose sets writes into the key "GoalPose".
-- The syntax `${...}` tells to MoveBase to read the goal from the key "GoalPose" in the blackboard.
-- Alternatively, you can write a key/value pair into the Blackboard using the built-in action `SetBlackboard`.
+- `CalculateGoalPose` writes into the blackboard key "GoalPose".
+- The syntax `${...}` tells to `MoveBase` to read the goal from the key "GoalPose" in the blackboard.
+- Alternatively, you can write a key/value pair into the blackboard using the built-in action `SetBlackboard`.
 - Similar to step 2. Pose2D is retrieved from "OtherGoal".  
 
 !!! note
     For your information, __GoalPose__ is stored as a type erased Pose2D.
     
     On the other hand, __OtherGoal__ is stored as a std::string, but is converted 
-    to Pose2D the method `getParam()` using the function `convertFromString<Pose2D>()`.
+    to Pose2D by the method `getParam()` using the function `convertFromString<Pose2D>()`.
 
 In the following code sample we can see two equivalent ways to assign a 
 Blackboard to a tree.

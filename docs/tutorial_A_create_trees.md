@@ -54,14 +54,20 @@ a function pointer.
 
 The only requirement of the functor is to have either one of these signatures:
 
+``` c++
     BT::NodeStatus myFunction()
-    BT::NodeStatus myFunction(TreeNode& self) 
+    BT::NodeStatus myFunction(BT::TreeNode& self) 
+```
+
+For example:
 
 
 ``` c++
-BT::NodeStatus SayHello() {
+using namespace BT;
+
+NodeStatus SayHello() {
     std::cout << "Robot says Hello" << std::endl;
-    return BT::NodeStatus::SUCCESS;
+    return NodeStatus::SUCCESS;
 }
 
 class GripperInterface
@@ -69,16 +75,16 @@ class GripperInterface
 public:
     GripperInterface(): _open(true) {}
     
-	BT::NodeStatus open() {
+	NodeStatus open() {
 		_open = true;
 		std::cout << "GripperInterface::open" << std::endl;
-		return BT::NodeStatus::SUCCESS;
+		return NodeStatus::SUCCESS;
 	}
 
-	BT::NodeStatus close() {
+	NodeStatus close() {
 		std::cout << "GripperInterface::close" << std::endl;
 		_open = false;
-		return BT::NodeStatus::SUCCESS;
+		return NodeStatus::SUCCESS;
 	}
 
 private:
@@ -95,7 +101,13 @@ We can build a `SimpleActionNode` from any of these functors:
 
 ## A static Tree
 
-``` c++
+Let's create instances of our TreeNodes and compose them into a tree.
+
+- `BT::SequenceNode` is a built-in ControlNode provided by the library.
+- `BT::SimpleActionNode` is a synchronous ActionNode created passing a functor.
+- `DummyNodes::ApproachObject` is our user-defined ActionNode.
+
+``` c++ 
 #include "dummy_nodes.h"
 
 int main()

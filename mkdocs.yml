@@ -11,7 +11,7 @@ theme:
   feature:
     tabs: true
   palette:
-    primary: indigo
+    primary: blue
     accent: indigo
   font:
     text: Ubuntu

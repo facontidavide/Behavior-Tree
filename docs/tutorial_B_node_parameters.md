@@ -1,8 +1,8 @@
 # How to use NodeParameters
 
-NodeParameters are like arguments of a function.
+NodeParameters are like arguments passed to a function.
 
-They are a list of __key/value__ (both strings) that are usually
+They are a map of __key/value__ pairs (both strings) that are usually
 parsed from file.
 
 To create a TreeNodes that accepts NodeParameters, you must follow these rules:
@@ -23,12 +23,10 @@ static const BT::NodeParameters& requiredNodeParameters()
 ```
 
 
-## Example: an action with the parameter "message"
+## Example: an Action requiring the parameter "message"
 
-In the following example you can see a simple sunchronous ActionNodeBase.
-
-The parameter with the __key__ "message" is passed as a NodeParameter. Its __value__ is
-printed on console, without any conversion.
+`SaySomething` is a simple synchronous ActionNodeBase which will print the 
+string passed in the NodeParameter called "message".
 
 Please note:
 
@@ -37,8 +35,8 @@ Please note:
 - The __static__ method `requiredNodeParameters()` contains a single key/value pair.
   The string "default message" is the default value.
   
-- Parameters MUST be accessed using the method `getParam()`, preferably in the
-`tick()` method, since this value may change over time.  
+- Parameters must be accessed using the method `getParam()`, preferably in the
+`tick()` method.
 
 ``` c++ hl_lines="5 9 18"
 class SaySomething: public ActionNodeBase
@@ -182,9 +180,22 @@ To pass the parameter in the XML, use an attribute
 with the same name:
 
 ``` XML
-<MoveBaseAction goal="41.2;13.5;0.7"/>
-<SaySomething   message="Destination reached"/>
+<Sequence>
+	<MoveBaseAction goal="41.2;13.5;0.7"/>
+	<SaySomething   message="Destination reached"/>
+	<SaySomething/> <!-- No parameter passed  --> 
+</Sequence>	
 ```
+
+Expected output:
+    
+    
+    [ MoveBase: STARTED ]: goal: x=41.2 y=13.5 theta=0.7
+    [ MoveBase: FINISHED ]
+    Robot says: Destination reached
+    Robot says: default message
+
+
 
 
 

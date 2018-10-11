@@ -5,17 +5,18 @@ and linked statically into out projects.
 
 We used the `BehaviorTreeFactory` to registed manualy these custom TreeNodes.
 
-We can avoid these steps loading user-defined TreeNodes at run-time using 
-pre-compiled dynamic shared libraries, i.e. __plugins__.
+Alternatively, we can load user-defined TreeNodes at run-time using 
+pre-compiled __dynamic shared libraries, i.e. plugins__.
 
 # Example
 
 Let's consider the [first tutorial](tutorial_A_create_trees.md).
 
-We can encapsulate the registration of multiple TreeNodes into a single 
+To do this we must encapsulate the registration of multiple TreeNodes into a single 
 function like this:
 
 ``` c++
+// This is a macro. Just deal with it.
 BT_REGISTER_NODES(factory)
 {
     static GripperInterface gi; // we can't have more than instance
@@ -30,29 +31,26 @@ BT_REGISTER_NODES(factory)
 }
 ```
 
-
-`BT_REGISTER_NODES` is a macro that defines a function which symbol can be loaded
-from a dynamic library.
-
 !!! note
-    This function must be placed in __.cpp__ file, not an header file.
+    This function must be placed in __.cpp__ file, not the header file.
     
 In this particular example we assume that BT_REGISTER_NODES and
-the definitions of our custom TreeNodes are defined in the file __dummy_nodes.cpp__.
+the definitions of our custom TreeNodes are all defined in the file __dummy_nodes.cpp__.
 
-In __cmake__ the plugin can be compiled using the argument SHARED in
+If you compile the plugin using __cmake__, add the argument `SHARED` to
 `add_library`.
 
 ```cmake
+#your CMakeLists.txt
 add_library(dummy_nodes  SHARED dummy_nodes.cpp )
 ``` 
 
-In Linux the file __libdummy_nodes.so__ is created.
+In Linux the file __libdummy_nodes.so__ will be created.
 
-Our first tutorial is, as a result, much simpler now:
+The [first tutorial](tutorial_A_create_trees.md) becomes, as a result, much simpler:
 
 
-```c++ hl_lines="3 24"
+```c++ hl_lines="3 25"
 #include "behavior_tree_core/xml_parsing.h"
 #include "Blackboard/blackboard_local.h"
 // #include "dummy_nodes.h" YOU DON'T NEED THIS ANYMORE
@@ -75,6 +73,7 @@ const std::string xml_text = R"(
 int main()
 {
 	using namespace BT;
+	
     BehaviorTreeFactory factory;
     factory.registerFromPlugin("./libdummy_nodes.so");
 
@@ -96,11 +95,13 @@ int main()
 ## Display the manifest of a plugin
 
 BehaviorTree.CPP provides a command line tool called 
-__bt_plugin_manifest__; it shows all user-defind TreeNodes
+__bt_plugin_manifest__.
+
+It shows all user-defind TreeNodes
 registered into the plugin and their corresponding NodeParameters.
 
 
-``` 
+```
 $> ./bt_plugin_manifest ./libdummy_nodes.so 
 
 ---------------
