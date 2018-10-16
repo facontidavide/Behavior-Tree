@@ -17,5 +17,5 @@ to visualize, record, replay and analyze state transitions.
 
 Moved
 ------------
-This project was moved to https://github.com/BehaviorTree/BehaviorTreeCPP
+This project was moved to https://github.com/BehaviorTree/BehaviorTree.CPP
 
